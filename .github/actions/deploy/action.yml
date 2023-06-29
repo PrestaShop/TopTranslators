@@ -1,0 +1,56 @@
+name: "deploy"
+description: "deploy into the cluster"
+inputs:
+  workspace:
+    description: "Workspace used by terraform"
+    required: true
+    default: "default"
+  cloud-path:
+    required: true
+    description: "Cloud application path"
+  prefix-tag:
+    required: false
+    description: "Prefixed used in alpha for the tag image"
+    default: ""
+  gcp-credentials:
+    required: true
+    description: "GCP services account credentials"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get tag
+      shell: bash
+      id: get_tag
+      run: echo TAG=$PREFIX_TAG$(echo $GITHUB_REF | cut -d / -f 3) >> $GITHUB_OUTPUT
+      env:
+        PREFIX_TAG: ${{ inputs.prefix-tag }}
+
+    - name: Terraform init and fmt
+      shell: bash
+      working-directory: ${{ inputs.cloud-path }}
+      run: |
+        terraform init
+        echo "Checking if terraform workspace exists..."
+        if [[ $(terraform workspace list) =~ "${{ inputs.workspace }}" ]]; then
+          echo "The ${{ inputs.workspace }} workspace exists"
+          terraform workspace select ${{ inputs.workspace }}
+        else
+          echo "The ${{ inputs.workspace }} workspace does not exist"
+          terraform workspace new ${{ inputs.workspace }}
+        fi
+        terraform fmt
+      env:
+        GOOGLE_CREDENTIALS: ${{ inputs.gcp-credentials }}
+
+    - name: Terraform apply
+      shell: bash
+      working-directory: ${{ inputs.cloud-path }}
+      run: |
+        terraform apply -auto-approve \
+        --var app_version=$TAG \
+        --var hash_id=$SHA
+      env:
+        TAG: ${{ steps.get_tag.outputs.TAG }}
+        SHA: ${{ github.sha }}
+        GOOGLE_CREDENTIALS: ${{ inputs.gcp-credentials }}

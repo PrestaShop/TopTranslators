@@ -1,0 +1,70 @@
+name: preproduction CD BUILD for translators
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  TF_VERSION: '1.4.6'
+  APP_PATH: ./
+  DISTRIBUTION_APP: "translators"
+
+concurrency:
+  group: "preproduction-${{ github.ref }}"
+
+jobs:
+  preproduction_build:
+    name: build (preproduction)
+    runs-on: ubuntu-latest
+    environment: preproduction
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v3
+
+      - name: Auth GCP Registry
+        uses: ./.github/actions/auth-registry
+        with:
+          gcp-credentials: ${{ secrets.GOOGLE_CREDENTIALS_PREPRODUCTION }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Build app 👷
+        uses: ./.github/actions/build
+        with:
+          gcp-credentials: ${{ secrets.GOOGLE_CREDENTIALS_PREPRODUCTION }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+          app-path: "${{ env.APP_PATH }}"
+          app-name: "translators"
+
+  preproduction_deploy:
+    name: deploy (preproduction)
+    runs-on: ubuntu-latest
+    environment: preproduction
+    needs: ["preproduction_build"]
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setting up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Reconfig git to download terraform modules from private repos
+        run: |
+          git config --global url."https://oauth2:${{ secrets.TERRAFORM_ACCESS_TOKEN }}@github.com".insteadOf ssh://git@github.com
+
+      - name: Auth GCP Cluster
+        uses: ./.github/actions/auth-cluster
+        with:
+          gcp-credentials: ${{ secrets.GOOGLE_CREDENTIALS_PREPRODUCTION }}
+          gcp-project-id: ${{ vars.GCP_RUN_PROJECT_ID }}
+
+      - name: Deploy app 🚚
+        uses: ./.github/actions/deploy
+        with:
+          workspace: "default"
+          cloud-path: './terraform/envs/preproduction'
+          gcp-credentials: ${{ secrets.GOOGLE_CREDENTIALS_PREPRODUCTION }}

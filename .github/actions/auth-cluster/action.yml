@@ -1,0 +1,41 @@
+name: 'Auth GCP'
+description: 'Auth gcp and configure docker to push into GCP registry'
+inputs:
+  gcp-project-id:
+    required: true
+    description: 'GCP project_id'
+  gcp-credentials:
+    required: true
+    description: 'GCP services account credentials'
+  gcp-registry-region:
+    required: false
+    description: 'Registry region'
+    default: 'europe-west1-docker.pkg.dev'
+  cluster-name:
+    required: false
+    description: 'Cluster name'
+    default: 'distribution'
+  cluster-zone:
+    required: false
+    description: 'Cluster zone'
+    default: 'europe-west1-c'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Authenticating to GCP ⚙️
+      uses: google-github-actions/auth@v1
+      with:
+        project_id: ${{ inputs.gcp-project-id }}
+        credentials_json: ${{ inputs.gcp-credentials }}
+
+    - name: Setting up Cloud SDK ⚙️
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Authenticating to the kubernetes cluster 🔑
+      shell: bash
+      run: |
+        gcloud components install gke-gcloud-auth-plugin
+        export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+        source ~/.bashrc
+        gcloud container clusters get-credentials ${{ inputs.cluster-name }}  --zone ${{ inputs.cluster-zone }} --project ${{ inputs.gcp-project-id }}
