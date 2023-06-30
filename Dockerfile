@@ -1,4 +1,4 @@
-FROM alpine AS builder1
+FROM  alpine AS builder1
 
 ARG CROWDIN_TOKEN
 
@@ -6,10 +6,10 @@ RUN apk add --update --no-cache curl jq
 
 WORKDIR /app/
 
-RUN curl "https://api.crowdin.com/api/project/prestashop-official/status?key=$CROWDIN_TOKEN&json" | jq -r '.[] | [.name, .approved_progress]| @csv' > /app/translations.csv
+RUN curl "https://api.crowdin.com/api/project/prestashop-official/status?key=70765ed4dfde3dd0b60aa9187f3f2588&json" | jq -r '.[] | [.name, .approved_progress]| @csv' > /app/translations.csv
 
-RUN curl "https://api.crowdin.com/api/project/prestashop-official/reports/top-members/export?key=$CROWDIN_TOKEN&json&date_from=2016-01-01&format=csv" |jq -r .hash > /app/hash && \
-    curl "https://api.crowdin.com/api/project/prestashop-official/reports/top-members/download?key=$CROWDIN_TOKEN&hash=$(cat /app/hash)" >> /app/translators.csv
+RUN curl "https://api.crowdin.com/api/project/prestashop-official/reports/top-members/export?key=70765ed4dfde3dd0b60aa9187f3f2588&json&date_from=2016-01-01&format=csv" |jq -r .hash > /app/hash && \
+    curl "https://api.crowdin.com/api/project/prestashop-official/reports/top-members/download?key=70765ed4dfde3dd0b60aa9187f3f2588&hash=$(cat /app/hash)" >> /app/translators.csv
 
 FROM node:8 AS builder2
 
