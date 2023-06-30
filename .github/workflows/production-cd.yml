@@ -29,6 +29,10 @@ jobs:
           gcp-credentials: ${{ secrets.GOOGLE_CREDENTIALS_PRODUCTION }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
+      - name: "Retrieving configuration"
+        shell: bash
+        run: gcloud secrets versions access latest --project=${{ vars.GCP_PROJECT_ID }} --secret=translators-env > .env
+
       - name: Build app 👷
         uses: ./.github/actions/build
         with:
