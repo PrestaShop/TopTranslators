@@ -45,10 +45,10 @@ runs:
       run: |
         docker build \
           --no-cache \
-          --tag="${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}-${APP_NAME}:latest" \
-          --tag="${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}-${APP_NAME}:${TAG}" .
-        docker push "${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}-${APP_NAME}:${TAG}"
-        docker push "${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}-${APP_NAME}:latest"
+          --tag="${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}:latest" \
+          --tag="${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}:${TAG}" .
+        docker push "${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}:${TAG}"
+        docker push "${GCLOUD_REGISTRY}/${GCLOUD_PROJECT_ID}/${PROJECT_NAME}/${PROJECT_NAME}:latest"
       env:
         GCLOUD_REGISTRY: ${{ inputs.gcp-registry }}
         GCLOUD_PROJECT_ID: ${{ inputs.gcp-project-id }}
