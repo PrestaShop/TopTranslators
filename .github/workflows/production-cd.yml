@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - prod
+  # schedule:
+  #   - cron: "0 7 * * *"
 
 env:
   TF_VERSION: '1.4.6'

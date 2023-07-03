@@ -2,3 +2,5 @@ node_modules/
 front/public/
 .DS_Store
 npm-debug.log
+.terraform
+**/terraform.tfstate.d

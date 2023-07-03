@@ -1,6 +1,6 @@
 module "translators" {
   source    = "git@github.com:PrestaShopCorp/terraform-deployments.git?ref=feat/new-ingresscontroller-traefik"
-  namespace = "compliance"
+  namespace = var.namespace
   labels    = var.labels
 
   endpoint_host                = var.endpoint_host

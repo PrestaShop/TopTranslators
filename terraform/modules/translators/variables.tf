@@ -7,6 +7,11 @@ variable "image" {
   description = "Image registry"
 }
 
+variable "namespace" {
+  type        = string
+  description = "namespace K8S"
+  default     = "translators"
+}
 variable "app_version" {
   type        = string
   description = "Application version"
