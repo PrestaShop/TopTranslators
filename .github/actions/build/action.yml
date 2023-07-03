@@ -4,7 +4,7 @@ inputs:
   project:
     description: "Project id (used for gcp)"
     required: false
-    default: "bogamification"
+    default: "translators"
   app-path:
     required: true
     description: "Application path"
