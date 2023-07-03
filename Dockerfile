@@ -11,7 +11,7 @@ RUN curl "https://api.crowdin.com/api/project/prestashop-official/status?key=707
 RUN curl "https://api.crowdin.com/api/project/prestashop-official/reports/top-members/export?key=70765ed4dfde3dd0b60aa9187f3f2588&json&date_from=2016-01-01&format=csv" |jq -r .hash > /app/hash && \
     curl "https://api.crowdin.com/api/project/prestashop-official/reports/top-members/download?key=70765ed4dfde3dd0b60aa9187f3f2588&hash=$(cat /app/hash)" >> /app/translators.csv
 
-FROM node:8 AS builder2
+FROM node:18-buster AS builder2
 
 COPY . /app/
 WORKDIR /app/
