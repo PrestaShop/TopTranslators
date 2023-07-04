@@ -14,7 +14,7 @@ module "translators" {
       path     = "/"
       service_ports = [
         {
-          name        = "treafik"
+          name        = "traefik"
           port        = 8081
           target_port = 80
           protocol    = "TCP"
