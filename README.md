@@ -10,17 +10,18 @@ This website presents multiple informations about the translators project for Pr
 
 The website source code belongs in `/front` directory.
 
-### Setup
-
 1. Clone the repository
 2. Enter to `/front` repository
-3. Install NPM dependencies
-   ``` 
-   npm run build
-   ```
-4. You can either build the static files with `npm run build` or render it continuously for local development with `npm run dev`
+3. Run `$ php generate/generate.php > public/index.html` to generate the HTML static website page inside `/front/public` directory
 
-5. Browse the directory `/public` to render the website. It will use the data from the `statistics.json` file at root of `/public` directory.
+If you want to browse the webpage, use a webserver to serve the content of the `/front/public` directory.
+
+Example using [PHP built-in web server](https://www.php.net/manual/en/features.commandline.webserver.php):
+```
+$ cd front/public
+$ php -S localhost:8000
+```
+Then browse `localhost:8000`
 
 ## Deployment
 
@@ -46,13 +47,13 @@ These data files contain up-to-date data about the Crowdin PrestaShop project: t
 
 ### Data computing
 
-Inside `/csv_to_json` file lies a script whose goal is to compute file `statistics.json` from the above data CSV files. It then places the JSON data file in the `/public` directory, to be used by the website.
+Inside `/csv_to_json` file lies a script whose goal is to compute file `statistics.json` from the above data CSV files. It then places the JSON data file in the `/front/data` directory, to be used in the next step.
 
 ### Website building
 
-Inside `/front` directory is a webpack-powered Node application that builds the static files for the website. When opened in a browser, the JavaScript will be run, parse the `statistics.json` file and output the final website.
+Inside `/front` directory is a PHP script that builds the static files for the website. It parses the `statistics.json` file and output the final website as an HTML page.
 
-Source code for this application is inside `/front`, the static files are being written into `/public` directory.
+Source code for this application is inside `/front`, the static files are being written into `/front/public` directory.
 
 ## About each directory
 
@@ -133,12 +134,5 @@ Three columns parsed:
 
 The front website.
 
-To install and compile the website, run `npm install`. To simply compile the static website files, run
-`npm run build`. To watch your modifications live, run `npm run watch`.
-
-#### **Server** directory
-
-A basic node.js server for the application. Useful for local rendering, not needed in production.
-
-To start the server, install the dependencies with `npm install` then start the server with
-`npm start`.
+To compile the static website files, run `php generate/generate.php`. You need a statistics.json file in `front/data` folder.
+The PHP script will output an HTML page.
